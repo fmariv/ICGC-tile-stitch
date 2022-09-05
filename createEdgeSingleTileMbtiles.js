@@ -10,8 +10,6 @@ const _f = require('./config');
 const mbtiles_ori = _f.mbtiles_ori;
 const mbtiles_dest = _f.mbtiles_dest;
 const pol_cat = _f.pol_cat;
-const mbtiles_dest_source = _f.mbtiles_dest_source;
-const zoom_levels = _f.zoom_levels;
 
 argv.option([
 	{
@@ -56,7 +54,6 @@ async function createOrigenTempFiles(z, x, y, tile_origen, tileId, dir, url_clip
 			const bbox_tile_pol_file = await UtilsMbtiles.escribeArchivoJson(bbox_tile_pol_file_path, bbox_tile_pol);
 			//clip poligon
 			const clip_file = await UtilsMbtiles.clipGeoJSON(path.join(dir, tileId + "_clip_" + tipus + ".geojson"), bbox_tile_pol_file_path, url_clip);
-			//console.log(clip_file);
 			const geojson_cliped = await UtilsMbtiles.fileGeoJsonClip(geojson_file, clip_file, tileId, dir, tipus);
 			resolve(geojson_cliped);
 		} catch (err) {
@@ -102,8 +99,6 @@ async function createTileTippecanoe(tileId, tileIdDB, layers, dir) {
 				console.error(err);
 				reject(err);
 			} else {
-				//let hrend = process.hrtime(hrstart);
-				//console.log("createTileTippecanoe Execution time (hr): %s", prettySeconds(hrend[0]));
 				resolve(tileMB);
 			}
 		});
@@ -129,7 +124,6 @@ try{
 		const dir = path.join(__dirname, "temp", tileId);
 
 		console.info(tileId);
-		//rimraf(dir);
 		try {
 			fs.statSync(dir);
 		} catch (e) {
@@ -156,9 +150,6 @@ try{
 
 		//create tippecaoe mbtiles
 		const tileMb = await createTileTippecanoe(tileId, tileIdDB, layers, dir);
-
-		//let hrend = process.hrtime(hrstart);
-		//console.log("mergeTile Execution time (hr): %s", prettySeconds(hrend[0]));
 
 		resolve(tileId);
 

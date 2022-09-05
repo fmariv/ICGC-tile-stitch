@@ -1,16 +1,12 @@
-const fs = require('fs');
 const path = require('path');
 const syncEach = require('sync-each');
 
 const UtilsMbtiles = require('./utilsMbtiles');
 const _f = require('./config');
 
-const hrstart = process.hrtime();
-
 const mbtiles_ori = _f.mbtiles_ori;
 const mbtiles_dest = _f.mbtiles_dest;
 const pol_cat = _f.pol_cat;
-const mbtiles_dest_source = _f.mbtiles_dest_source;
 
 const zoom_levels = _f.zoom_levels;
 

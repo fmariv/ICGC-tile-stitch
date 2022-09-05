@@ -18,26 +18,16 @@ class OpenMapTiles extends MbTiles{
 		if (!Buffer.isBuffer(data)) return callback(new Error('Image needs to be a Buffer'));
 		var mbtiles = this;
 		var _db = mbtiles._db;
-		//console.log(mbtiles);
-		//console.log(_db);
 		_db.run('PRAGMA synchronous=OFF');
 
 		_db.serialize(function() {
 			_db.run('BEGIN');
-			// Flip Y coordinate because MBTiles files are TMS.
 			y = getTMSy(z, y);
-			//console.log(y);
 			var coords = createTileId(z, x, y);
 			console.log(coords);
-			//console.log(data);
-			var images = _db.prepare('UPDATE images SET tile_data = ? WHERE tile_id = ?');
-			images.run(data, coords);
+			var images = _db.prepare('UPDATE tiles SET tile_data = ? WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?');
+			images.run(data, z, x, y);
 			images.finalize();
-			/*
-			var images = _db.prepare('SELECT * FROM images WHERE tile_id = ?');
-			images.run(coords);
-			images.finalize();
-			*/
 			_db.run('COMMIT', callback);
 		});
 	}
@@ -48,26 +38,16 @@ class OpenMapTiles extends MbTiles{
 		if (!Buffer.isBuffer(data)) return callback(new Error('Image needs to be a Buffer'));
 		var mbtiles = this;
 		var _db = mbtiles._db;
-		//console.log(mbtiles);
-		//console.log(_db);
 		_db.run('PRAGMA synchronous=OFF');
 
 		_db.serialize(function() {
 			_db.run('BEGIN');
-			// Flip Y coordinate because MBTiles files are TMS.
 			y = getTMSy(z, y);
-			//console.log(y);
 			var coords = createTileId(z, x, y);
 			console.log(coords);
-			//console.log(data);
-			var images = _db.prepare('UPDATE images SET tile_data = ? WHERE tile_id = (SELECT tile_id FROM map WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?)');
+			var images = _db.prepare('UPDATE tiles SET tile_data = ? WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?');
 			images.run(data, z, x, y);
 			images.finalize();
-			/*
-			var images = _db.prepare('SELECT * FROM images WHERE tile_id = ?');
-			images.run(coords);
-			images.finalize();
-			*/
 			_db.run('COMMIT', callback);
 		});
 	}

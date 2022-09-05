@@ -9,6 +9,9 @@ geojson-vt/
 *.qgd
 *.mbtiles
 *.log
+log.txt
 token.txt
 tiles16.geojson
 tiles15.geojson
+createEdgeSingleTileMbtiles.log
+config.js

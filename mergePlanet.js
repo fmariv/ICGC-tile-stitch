@@ -1,11 +1,8 @@
 const fs = require('fs');
-const path = require('path');
 const syncEach = require('sync-each');
 
 const UtilsMbtiles = require('./utilsMbtiles');
 const _f = require('./config');
-
-const hrstart = process.hrtime();
 
 const mbtiles_ori = _f.mbtiles_dest;
 const mbtiles_dest = _f.mbtiles_planet;

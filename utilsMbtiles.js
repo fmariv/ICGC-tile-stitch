@@ -1,8 +1,7 @@
 "use strict";
+
 const zlib = require('zlib');
-const rewind = require('geojson-rewind');
 const VectorTile = require('@mapbox/vector-tile').VectorTile;
-const turf = require('@turf/turf');
 const fs = require('fs');
 const { execFile } = require('child_process');
 const path = require('path');
@@ -130,10 +129,6 @@ class UtilsMbtiles {
 
 				var _db = mbtiles._db;
 				var tileId = `${z}/${x}/${y}`;
-				//14/7746/9935
-				//console.log(data.toGeoJSON());
-				//console.log(_db);
-				//_db.run('PRAGMA synchronous=OFF');
 				_db.run('PRAGMA synchronous=OFF');
 				
 				_db.serialize(function () {
@@ -144,11 +139,8 @@ class UtilsMbtiles {
 							return reject(err.message);
 						}
 						// get the last insert id
-					//	console.log(buffer);
 						console.log(`A row has been images`);
-						//_db.run('COMMIT');
 					});
-					//_db.serialize(function () {
 						_db.run(`INSERT INTO map(zoom_level,tile_column,tile_row,tile_id) VALUES(?,?,?,?)`, [z, x, y, tileId], function (err) {
 							if (err) {
 								console.info(err);
@@ -156,45 +148,12 @@ class UtilsMbtiles {
 							}
 							// get the last insert id
 							console.log(`A row has been map`);
-							//_db.run('COMMIT');
 						});
-					//});
 					_db.run('COMMIT');
 					
 				});
 			
-
-				// close the database connection
-				//  _db.close();
 				return resolve();
-				//_db.serialize(function() {
-				//	_db.run('BEGIN');
-
-				/*
-				mbtiles.startWriting(function(err) {
-
-					console.info("err",err);
-				mbtiles.putTile(z, x, y, buffer, function(err) {
-					if (err) {
-						reject(err);
-						//throw err;
-					}else{
-						mbtiles.stopWriting(function(err) {
-							// stop writing to your mbtiles object
-							if (err) {
-								//throw err;
-								reject(err);
-							}else{
-								//console.log("stopWriting");
-								//let hrend = process.hrtime(hrstart);
-								//console.log("Execution time (hr): %s", prettySeconds(hrend[0]));
-								resolve();
-							}
-						}); //end stopwrite
-					}
-				});
-			  });
-			  */
 		});
 
 		});
@@ -214,9 +173,6 @@ class UtilsMbtiles {
 							//throw err;
 							reject(err);
 						} else {
-							//console.log("stopWriting");
-							//let hrend = process.hrtime(hrstart);
-							//console.log("Execution time (hr): %s", prettySeconds(hrend[0]));
 							resolve();
 						}
 					}); //end stopwrite
@@ -244,8 +200,6 @@ class UtilsMbtiles {
 								reject(err);
 							} else {
 							
-								//let hrend = process.hrtime(hrstart);
-								//console.log("Execution time (hr): %s", prettySeconds(hrend[0]));
 								resolve();
 							}
 						}); //end stopwrite
@@ -265,17 +219,14 @@ class UtilsMbtiles {
 			try {
 				const tile_origen = await UtilsMbtiles.getTile(tile_index.z, tile_index.x, tile_index.y, origen_mbt);
 
-				//console.info("gettile",tile_origen);
 				if (tile_origen) {
 					await UtilsMbtiles.writeTile(destino_mbt, tile_origen, tile_index.z, tile_index.x, tile_index.y);
-					//console.info("he actalitzat tiles");
 					resolve(tile_index);
 				} else {
 					resolve();
 				}
 			} catch (err) {
 				console.info("No trobo tile", err);
-				//reject(err);
 				resolve()
 			}
 		});
@@ -285,16 +236,11 @@ class UtilsMbtiles {
 		return new Promise(async function (resolve, reject) {
 			try {
 				const tile_origen = await UtilsMbtiles.getTile(tile_index.z, tile_index.x, tile_index.y, origen_mbt);
-
-				//console.info("gettile",tile_origen);
-
 				await UtilsMbtiles.updateTile(destino_mbt, tile_origen, tile_index.z, tile_index.x, tile_index.y);
-				//console.info("he actalitzat tiles");
 				resolve(tile_index);
 			} catch (err) {
 				console.info("hi ha error",err);
 				resolve();
-				//reject(err);
 			}
 		});
 	}
@@ -322,7 +268,6 @@ class UtilsMbtiles {
 			zlib.unzip(data, function (err, tile) {
 				if (err) {
 					reject(err);
-					//tile= data;
 				}
 				var rawTile = new VectorTile(new Pbf(tile));
 				var layers = Object.keys(rawTile.layers);
@@ -342,9 +287,6 @@ class UtilsMbtiles {
 						}
 					}
 				});
-				//const clockwise = false;
-				//const flatten = turf.flatten(collection);
-				//collection = rewind(flatten, clockwise);
 
 				resolve(collection);
 			});
@@ -356,8 +298,6 @@ class UtilsMbtiles {
 		return new Promise(async function (resolve, reject) {
 			const tilejson_origen = await UtilsMbtiles.tile2geoJSON(z, x, y, tile_origen);
 			const output_origen_file = await UtilsMbtiles.escribeArchivoJson(path.join(dir, tileId + "_full_" + tipus + ".geojson"), tilejson_origen);
-			//let hrend = process.hrtime(hrstart);
-			//console.log("tesela2FileGeoJson Execution time (hr): %s", prettySeconds(hrend[0]));
 			resolve(output_origen_file);
 		});
 	}
@@ -424,8 +364,6 @@ class UtilsMbtiles {
 		return new Promise(async function (resolve, reject) {
 			if (tipus !== 'origen') {
 				const output_file_origen = await UtilsMbtiles.clipGeoJSON(path.join(dir, tileId + "_cliped_" + tipus + ".geojson"), geojson_path, clip_path);
-				//let hrend = process.hrtime(hrstart);
-				//console.log("fileGeoJsonClip Execution time (hr): %s", prettySeconds(hrend[0]));
 				resolve(output_file_origen);
 			} else {
 				const output_file_origen = path.join(dir, tileId + "_cliped_" + tipus + ".geojson");
@@ -445,18 +383,11 @@ class UtilsMbtiles {
 		return new Promise(async function (resolve, reject) {
 			var clockwise = false;
 			const keysItems = layersKeys.map(async function (item) {
-				//let geojson = rewind(layers[item], clockwise);
 				let geojson = layers[item];
-				//let key_file = {};
 				let json_file = await UtilsMbtiles.escribeArchivoJson(path.join(dir, item + ".geojson"), geojson);
-				//let hrend = process.hrtime(hrstart);
-				//key_file[item] = json_file;
-				//console.log("crearArchivosJson %s Execution time (hr): %s", item, prettySeconds(hrend[0]));
 				return [item, json_file];
 			});
 			Promise.all(keysItems).then((completed) => {
-				//let hrend = process.hrtime(hrstart);
-				//console.log("crearArchivosJson Execution time (hr): %s", prettySeconds(hrend[0]));
 				resolve(completed);
 			});
 		});

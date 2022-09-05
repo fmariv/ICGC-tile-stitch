@@ -26,14 +26,11 @@ var insertAll = function(coll, callback){
         var id_tmp = elem.id.replace("(","").replace(")","").split(", ").join("_");
         insertTile(elem, function(err, _elem){
             if (err) { throw err;}
-            //iterate();
-            //setTimeout(iterate, 0);
             process.nextTick(iterate);
         });
     })()
 }
 
-//var features = jsonTiles.features.slice(0,5);
 var features = jsonTiles.features;
 
 insertAll(features,function(){
