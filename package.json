@@ -1,13 +1,13 @@
 {
-  "name": "overpass_api",
+  "name": "tile-stitch",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tool aimed at replacing tiles inside a given mbtiles file with tiles from another set of tiles, using a polygon to mask the stitching area and merge if needed contents from both sets of boundary tiles",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "preinstall": "npx npm-force-resolutions"
   },
-  "author": "",
+  "author": "Institut Cartogràfic i Geològic de Catalunya",
   "license": "ISC",
   "dependencies": {
     "@mapbox/geojson-merge": "^1.1.1",
